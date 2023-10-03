@@ -1,6 +1,7 @@
 import smtplib
 
 from tkinter import *
+from tkinter import messagebox
 from decouple import config
 from data import RequestData
 
@@ -96,12 +97,15 @@ class QuoteInterface:
     def send_email(self):
         self.email_address = self.email_text.get()
         
-        
-        with smtplib.SMTP("smtp.gmail.com", port = 587) as connection:
-            connection.starttls()
-            connection.login(user = config("SENDER_EMAIL"), password = config("APP_PASSWORD"))
-            connection.sendmail(
-                from_addr = config("SENDER_EMAIL"),
-                to_addrs = self.email_address,
-                msg = f"Subject:Inspirational Quote\n\n{quote_text}"
-            )
+        if len(self.email_address) < 5:
+            messagebox.showwarning(
+                title = "Warning", message = "The length of the email address is too short.")
+        else:
+            with smtplib.SMTP("smtp.gmail.com", port = 587) as connection:
+                connection.starttls()
+                connection.login(user = config("SENDER_EMAIL"), password = config("APP_PASSWORD"))
+                connection.sendmail(
+                    from_addr = config("SENDER_EMAIL"),
+                    to_addrs = self.email_address,
+                    msg = f"Subject:Inspirational Quote\n\n{quote_text}"
+                )
